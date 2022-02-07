@@ -13,6 +13,25 @@
             echo '<h1>Affichate d\'un Article</h1>';
 
         } 
+
+        public function insertion() {
+
+            
+
+        }
+
+        public function supprimer() {
+
+            
+
+        }
+
+        public function edition() {
+
+
+
+        }
+
     }
 
 ?>
