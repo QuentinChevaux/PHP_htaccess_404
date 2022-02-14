@@ -14,14 +14,14 @@
 
                 <div class="form-floating mb-3">
 
-                    <input type='password' name='password' id='floatingtitre'class="form-control" />
+                    <input type='password' name='password' id='floatingtitre'class="form-control" value="<?= $log["password"] ?>" autofocus/>
                     <label for="floatingtitre">Modifier Mot de Passe : </label>
 
                 </div>
 
                 <div class="form-floating mb-3">
 
-                    <input type='password' name='password_confirm' id='floatingtitre'class="form-control" />
+                    <input type='password' name='password_confirm' id='floatingtitre'class="form-control" value="<?= $log["password"] ?>"/>
                     <label for="floatingtitre">Confirmer nouveau Mot de Passe : </label>
 
                 </div>

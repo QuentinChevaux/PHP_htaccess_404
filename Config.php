@@ -15,6 +15,7 @@
         const CONNEXION = '/php_pdo/utilisateur/connexion';
         const DECONNEXION = '/php_pdo/utilisateur/deconnexion';
         const EDITION = '/php_pdo/utilisateur/edition/';
+        const ADMIN ='/php_pdo/utilisateur/admin/';
 
     }
 

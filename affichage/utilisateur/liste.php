@@ -76,8 +76,6 @@
 
     } else {
 
-        
-
         ?>
     
                 <div class="card text-white bg-primary mb-3" style="max-width: 20rem;">
@@ -88,6 +86,19 @@
                         <p class="card-text"><?= $utilisateur['login'] ?></p>
     
                         <a class='card-link' href="<?= Config::EDITION . $utilisateur['id'] ?>">&#9998;</a>
+
+                        <?php
+
+                            if($utilisateur['is_admin']) {
+                                ?>
+
+                                    <a class='card-link' href="<?= Config::ADMIN ?>">&#128273;</a>
+
+                                <?php
+
+                            }
+
+                        ?>
     
                     </div>
                 </div>

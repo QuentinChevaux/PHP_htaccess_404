@@ -83,7 +83,17 @@
 
                     if (password_verify($_POST['password'], $login['password'])) {
 
-                        $_SESSION['logged'] = $_POST['login'];
+                        if($login['is_admin']){
+
+                            $_SESSION['admin'] = 1;
+
+                            $_SESSION['logged'] = $_POST['login'];
+
+                        } else {
+
+                            $_SESSION['logged'] = $_POST['login'];
+
+                        }
 
                         header('Location: ' . \Config::USER_LIST);
 
@@ -132,10 +142,28 @@
                 if(isset($_SESSION['logged']) && $_POST['password'] == $_POST['password_confirm']) {
     
                     $request2 = $connexion -> prepare('UPDATE utilisateur SET `login` = ?, `password` = ? WHERE id = ?');
-    
-                    $request2 -> execute([ $_POST['login'], password_hash($_POST['password'], PASSWORD_BCRYPT), $parametre ]);
 
-                    $_SESSION['modified'] = 'Mot de Passe et Login Modifié !';
+                    if($_POST['password'] == $log['password']) {
+
+                        $request2 -> execute([ $_POST['login'], $_POST['password'], $parametre ]);
+ 
+                    } else {
+                        
+                        $request2 -> execute([ $_POST['login'], password_hash($_POST['password'], PASSWORD_BCRYPT), $parametre ]);
+
+                    }
+    
+                    $_SESSION['logged'] = $_POST['login'];
+
+                    if($_POST['login'] == $log['login'] && $_POST['password'] == $log['password']) {
+
+                        $_SESSION['modified'] = 'Aucune Modification n\'a été faite !';
+
+                    } else {
+
+                        $_SESSION['modified'] = 'Mot de Passe et Login Modifié !';
+
+                    }
 
                     header('Location: ' . \Config::USER_LIST);
     
@@ -143,6 +171,14 @@
 
             }
             
+        }
+
+        public function admin($parametre) {
+
+            include 'bdd.php';
+
+            $this -> afficherVue([], 'admin');
+
         }
 
     }
