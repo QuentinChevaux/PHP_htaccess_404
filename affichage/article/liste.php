@@ -18,8 +18,8 @@
                     
                     <a class='btn btn-primary' href="<?= Config::AFFICHER . $article['id'] ?>">Voir plus</a>
 
-                </div>
-            </div>
+    </div>
+</div>
 
         <?php             
 

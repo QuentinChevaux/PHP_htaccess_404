@@ -9,6 +9,13 @@
         const IMAGE = '/php_pdo/assets/image/';
         const DELETE = '/php_pdo/article/supprimer/';
         const UPDATE = '/php_pdo/article/edition/';
+
+        const USER_LIST = '/php_pdo/utilisateur/';
+        const INSCRIPTION = '/php_pdo/utilisateur/inscription';
+        const CONNEXION = '/php_pdo/utilisateur/connexion';
+        const DECONNEXION = '/php_pdo/utilisateur/deconnexion';
+        const EDITION = '/php_pdo/utilisateur/edition/';
+
     }
 
 ?>
