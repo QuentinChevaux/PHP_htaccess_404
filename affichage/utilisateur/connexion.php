@@ -2,7 +2,7 @@
 
     <div class="form-floating mb-3">
 
-        <input type='text' name='login' id='floatingtitre'class="form-control" required/>
+        <input type='text' name='login' id='floatingtitre' class="form-control" required/>
         <label for="floatingtitre">Nom d'utilisateur : </label>
 
     </div>

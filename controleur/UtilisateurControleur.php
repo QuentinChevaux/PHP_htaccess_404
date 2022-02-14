@@ -50,7 +50,7 @@
 
                     $_SESSION['registered'] = 'Vous vous êtes bien Inscrit !';
 
-                    header('Location: ' . \Config::USER_LIST);
+                    header('Location: ' . \Config::CONNEXION);
 
                 } else {
 
