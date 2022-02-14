@@ -2,6 +2,8 @@
 
     namespace controleur;
 
+    use Config;
+
     session_start();
 
     class UtilisateurControleur extends BaseControleur {
@@ -50,7 +52,7 @@
 
                     $_SESSION['registered'] = 'Vous vous êtes bien Inscrit !';
 
-                    header('Location: ' . \Config::CONNEXION);
+                    header('Location: ' . Config::CONNEXION);
 
                 } else {
 
@@ -95,7 +97,7 @@
 
                         }
 
-                        header('Location: ' . \Config::USER_LIST);
+                        header('Location: ' . Config::USER_LIST);
 
                     }
 
@@ -117,7 +119,7 @@
     
                 session_destroy();
     
-                header('Location: ' . \Config::USER_LIST);
+                header('Location: ' . Config::USER_LIST);
 
             }
 
@@ -165,7 +167,7 @@
 
                     }
 
-                    header('Location: ' . \Config::USER_LIST);
+                    header('Location: ' . Config::USER_LIST);
     
                 }
 
@@ -173,7 +175,7 @@
             
         }
 
-        public function admin($parametre) {
+        public function admin() {
 
             include 'bdd.php';
 
