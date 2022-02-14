@@ -3,30 +3,32 @@
     include 'AutoLoader.php';
     AutoLoader::start();
 
+    
+
     $chemin = $_GET['chemin'];
     
     $partiechemin = explode("/", $chemin);
     
-    // if(isset($nomcontroleur)) {
+    if(isset($partiechemin[0]) && $partiechemin[0] != '') {
         
         $nomcontroleur = 'controleur\\' . ucfirst($partiechemin[0]).'Controleur';
 
-    // } else {
+    } else {
 
-        
+        $nomcontroleur = 'controleur\\ArticleControleur';
 
-    // }
+    }
 
 
-    // if(isset($nomaction)) {
+    if(isset($partiechemin[1]) && $partiechemin[1] != '') {
 
         $nomaction = $partiechemin[1];
 
-    // } else {
+    } else {
 
+        $nomaction = 'liste';
 
-
-    // }
+    }
 
     if(isset($partiechemin[2]) && $partiechemin[2] != '') {
         

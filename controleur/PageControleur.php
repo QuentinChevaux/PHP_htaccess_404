@@ -2,7 +2,7 @@
 
     namespace controleur;
 
-    class PageControleur {
+    class PageControleur extends BaseControleur {
 
         public function pageNonTrouve() {
 

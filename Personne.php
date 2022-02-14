@@ -2,8 +2,8 @@
 
     class Personne {
 
-        private $nom;
-        private $prenom;
+        protected $nom; // PUBLIC = Tout le monde peut voir | PROTECTED = La classe et les enfants peuvent le voir | PRIVATE = Seulement la classe peut le voir
+        protected $prenom;
 
         function nom_complet() {
 
@@ -11,7 +11,7 @@
 
         }
 
-        function __construct($nom, $prenom = 'root')
+        function __construct($nom, $prenom)
         {
             $this->nom = $nom;
             $this->prenom = $prenom;

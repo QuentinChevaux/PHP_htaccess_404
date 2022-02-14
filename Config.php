@@ -8,7 +8,7 @@
         const INSERT = '/php_pdo/article/insertion';
         const IMAGE = '/php_pdo/assets/image/';
         const DELETE = '/php_pdo/article/supprimer/';
-        const UPDATE = '/php_pdo/article/update/';
+        const UPDATE = '/php_pdo/article/edition/';
     }
 
 ?>

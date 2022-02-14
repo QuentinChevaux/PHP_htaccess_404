@@ -2,9 +2,9 @@
 
     namespace controleur;
 
-use Config;
+    use Config;
 
-class ArticleControleur {
+class ArticleControleur extends BaseControleur {
 
         public function liste() {
 
@@ -16,7 +16,9 @@ class ArticleControleur {
 
             $articles = $liste -> fetchAll();
 
-            include 'affichage/liste.php';
+            $parametres = compact('articles');
+
+            $this -> afficherVue($parametres);
 
         }
 
@@ -32,20 +34,21 @@ class ArticleControleur {
 
             if($article) {
 
-                include 'affichage/afficher.php';              
+                $parametres = compact('article');
+
+                $this -> afficherVue($parametres, 'afficher');              
 
             } else {
 
-                header('Location: ' . \Config::NOTFOUND); 
+                header('Location: ' . Config::NOTFOUND); 
 
             }
-
 
         } 
 
         public function insertion() {
-            
-            include 'affichage/insert.php';
+
+            $this -> afficherVue([], 'insert');
             
             if(isset($_POST['valider'])) {
 
@@ -91,17 +94,44 @@ class ArticleControleur {
 
         public function edition($parametre) {
 
-            include 'update.php';
+            include 'bdd.php';
+                        
+            $oldcard = $connexion -> prepare('SELECT * FROM article WHERE id = ?');
 
+            $oldcard -> execute([$parametre]);
+
+            $old = $oldcard -> fetch();
+
+            $parametres = compact('old');
+
+            $this -> afficherVue($parametres, 'edition'); 
+    
             if(isset($_POST['valider_update'])) {
 
-                include 'bdd.php';
+                $update = $connexion -> prepare('UPDATE article SET `titre` = ?, `contenu` = ?, `image` = ? WHERE id = ?');
+
+                $filename = $_FILES['image']['name'];
     
-                $update = $connexion -> prepare('UPDATE article SET `titre` = ?, `contenu` = ?');
+                $target_file = './assets/image/' . $filename;
+    
+                $file_extension = pathinfo($target_file, PATHINFO_EXTENSION);
+                $file_extension = strtolower($file_extension);
+    
+                // Verifie si l'extension de l'image est valide
+                $valid_extension = array("png","jpeg","jpg");
+    
+                    if(in_array($file_extension, $valid_extension)){
+        
+                        if(move_uploaded_file($_FILES['image']['tmp_name'],$target_file)){
+        
+                            $update -> execute([$_POST['titre'], $_POST['content'], $filename, $parametre]);
+        
+                        }
+        
+                    }
 
-                $update -> execute([$_POST['titre'], $_POST['content']])
-
-                header('Location: ' . Config::UPDATE);
+                header('Location: ' . Config::INDEX);
+                
             }
 
 
