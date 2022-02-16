@@ -85,7 +85,7 @@
 
                     if (password_verify($_POST['password'], $login['password'])) {
 
-                        if($login['id_droit'] == 1){
+                        if($login['id_droits'] == 1){
 
                             $_SESSION['admin'] = 1;
 
