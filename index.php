@@ -1,11 +1,11 @@
 <?php
 
+    session_start();
+
     include 'AutoLoader.php';
     AutoLoader::start();
 
-    
-
-    $chemin = $_GET['chemin'];
+    $chemin = str_replace('parametre=', '', $_GET['chemin']);
     
     $partiechemin = explode("/", $chemin);
     

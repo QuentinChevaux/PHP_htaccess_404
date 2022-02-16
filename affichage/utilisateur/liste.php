@@ -52,8 +52,6 @@
 
     }
 
-    if(!isset($_SESSION['logged'])) {
-
         foreach($utilisateur as $user) {
             
             ?>
@@ -64,35 +62,21 @@
                         <h2 class="card-title">Utilisateur :</h2>
     
                         <p class="card-text"><?= $user['login'] ?></p>
-    
-                        <a class='card-link' href="<?= Config::EDITION . $user['id'] ?>">&#9998;</a>
-    
-                    </div>
-                </div>
-    
-            <?php             
-    
-        }
 
-    } else {
-
-        ?>
-    
-                <div class="card text-white bg-primary mb-3" style="max-width: 20rem;">
-                    <div class="card-body">
-    
-                        <h2 class="card-title">Utilisateur :</h2>
-    
-                        <p class="card-text"><?= $utilisateur['login'] ?></p>
-    
-                        <a class='card-link' href="<?= Config::EDITION . $utilisateur['id'] ?>">&#9998;</a>
+                        <a class="card-link" href="<?= Config::EDITION . $user['id'] ?>" style='text-decoration: none; color: white'>&#9998;</a>
 
                         <?php
 
-                            if($utilisateur['is_admin']) {
+
+
+                            if($user['id_droit'] == 1 ) {
+
+
                                 ?>
 
                                     <a class='card-link' href="<?= Config::ADMIN ?>">&#128273;</a>
+
+                                    <p class='card-text'> <?= $user['denomination'] ?> </p>
 
                                 <?php
 
@@ -103,9 +87,9 @@
                     </div>
                 </div>
     
-        <?php         
-
-    }
+            <?php             
+    
+        }
 
 ?>
 

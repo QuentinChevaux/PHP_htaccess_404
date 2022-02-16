@@ -1,6 +1,6 @@
 <?php
 
-    if(isset($_SESSION['logged']) && $_SESSION['logged'] == $log['login']) {
+    if((isset($_SESSION['logged']) && $_SESSION['logged'] == $log['login']) || (isset($_SESSION['admin']))) {
         ?>
 
             <form class='form-group mt-5' method="POST" enctype="multipart/form-data">
@@ -29,6 +29,19 @@
                 <input type="submit" name='valider_update' value='Valider' />
 
             </form>
+
+                <?php
+
+                    if(isset($_SESSION['admin'])) {
+                        ?>
+
+
+
+                        <?php
+
+                    }
+
+                ?>
 
             <a href="<?= Config::USER_LIST ?>">Retourner à la page principale</a>
 

@@ -10,7 +10,7 @@ class ArticleControleur extends BaseControleur {
 
             include 'bdd.php';
 
-            $liste = $connexion -> prepare('SELECT * FROM article');
+            $liste = $connexion -> prepare('SELECT * FROM article JOIN utilisateur ON utilisateur.id = article.id_utilisateur');
 
             $liste -> execute();
 
@@ -26,15 +26,24 @@ class ArticleControleur extends BaseControleur {
 
             include 'bdd.php';
 
-            $afficher = $connexion -> prepare('SELECT * FROM article WHERE id = ?');
+            $afficher = $connexion -> prepare('SELECT * FROM `article` JOIN utilisateur ON utilisateur.id = article.id_utilisateur 
+                                                                       WHERE article.id = ?');
 
             $afficher -> execute([$parametre]);
 
             $article = $afficher -> fetch();
-
+            
             if($article) {
+                
+                $requete = $connexion -> prepare('SELECT * FROM `categorie_article`
+                                                  JOIN categorie ON categorie.id = categorie_article.id_categorie
+                                                  WHERE id_article = ?');
 
-                $parametres = compact('article');
+                $requete -> execute([$parametre]);
+
+                $categorie = $requete -> fetchAll();
+
+                $parametres = compact('article', 'categorie');
 
                 $this -> afficherVue($parametres, 'afficher');              
 
@@ -52,29 +61,41 @@ class ArticleControleur extends BaseControleur {
             
             if(isset($_POST['valider'])) {
 
-                include 'bdd.php';
+                if(isset($_SESSION['droit'])) {
 
-                $insert = $connexion -> prepare('INSERT INTO article (`titre`, `contenu`, `image`) VALUES (?, ?, ?)');
-    
-                $filename = $_FILES['image']['name'];
-    
-                $target_file = './assets/image/' . $filename;
-    
-                $file_extension = pathinfo($target_file, PATHINFO_EXTENSION);
-                $file_extension = strtolower($file_extension);
-    
-                // Verifie si l'extension de l'image est valide
-                $valid_extension = array("png","jpeg","jpg");
-    
-                    if(in_array($file_extension, $valid_extension)){
-        
-                        if(move_uploaded_file($_FILES['image']['tmp_name'],$target_file)){
-        
-                            $insert -> execute([ $_POST['titre'], $_POST['content'], $filename ]);
-        
-                        }
-        
+                    if($_SESSION['droit'] == 'admin' || $_SESSION['droit'] == 'redacteur') {
+
+                        include 'bdd.php';
+
+                        $insert = $connexion -> prepare('INSERT INTO article (`titre`, `contenu`, `image`, id_utilisateur) VALUES (?, ?, ?, ?)');
+            
+                        $filename = $_FILES['image']['name'];
+            
+                        $target_file = './assets/image/' . $filename;
+            
+                        $file_extension = pathinfo($target_file, PATHINFO_EXTENSION);
+                        $file_extension = strtolower($file_extension);
+            
+                        // Verifie si l'extension de l'image est valide
+                        $valid_extension = array("png","jpeg","jpg");
+            
+                            if(in_array($file_extension, $valid_extension)){
+                
+                                if(move_uploaded_file($_FILES['image']['tmp_name'],$target_file)){
+                
+                                    $insert -> execute([ $_POST['titre'], $_POST['content'], $filename, $_SESSION['id']]);
+                
+                                }
+                
+                            }
+
+                    } else {
+
+                        header('Location: ' . Config::INDEX);
+
                     }
+                    
+                }
 
             }
 
@@ -84,11 +105,15 @@ class ArticleControleur extends BaseControleur {
 
             include 'bdd.php';
 
-            $supprimer = $connexion -> prepare('DELETE FROM article WHERE id = ?');
+            if(isset($_SESSION['admin'])) {
 
-            $supprimer -> execute([$parametre]);
+                $supprimer = $connexion -> prepare('DELETE FROM article WHERE id = ?');
+    
+                $supprimer -> execute([$parametre]);
+    
+                header('Location: ' . Config::INDEX);
 
-            header('Location: ' . Config::INDEX);
+            }
 
         }
 

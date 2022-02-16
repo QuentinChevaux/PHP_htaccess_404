@@ -4,31 +4,29 @@
 
     use Config;
 
-    session_start();
-
     class UtilisateurControleur extends BaseControleur {
 
         public function liste() {
 
                 include 'bdd.php';
 
-                if(isset($_SESSION['logged'])) {
+                // if(isset($_SESSION['logged'])) {
 
-                    $utilisateur_connecte = $connexion -> prepare('SELECT * FROM utilisateur WHERE `login` = ?');
+                //     $utilisateur_connecte = $connexion -> prepare('SELECT * FROM utilisateur LEFT JOIN droit ON droit.id = utilisateur.id_droit WHERE `login` = ? ');
 
-                    $utilisateur_connecte -> execute([ $_SESSION['logged'] ]);
+                //     $utilisateur_connecte -> execute([ $_SESSION['logged'] ]);
 
-                    $utilisateur = $utilisateur_connecte -> fetch();
+                //     $utilisateur = $utilisateur_connecte -> fetchAll();
 
-                } else {
+                // } else {
 
-                    $liste = $connexion -> prepare('SELECT * FROM utilisateur');
+                    $liste = $connexion -> prepare('SELECT * FROM utilisateur LEFT JOIN droit ON droit.id = utilisateur.id_droit');
         
                     $liste -> execute();
         
                     $utilisateur = $liste -> fetchAll();
 
-                }
+                // }
     
                 $parametres = compact('utilisateur');
     
@@ -52,7 +50,7 @@
 
                     $_SESSION['registered'] = 'Vous vous êtes bien Inscrit !';
 
-                    header('Location: ' . Config::CONNEXION);
+                    header('Location: ' . Config::USER_LIST);
 
                 } else {
 
@@ -75,7 +73,9 @@
 
             if(isset($_POST['valider_connexion'])) {
 
-                $request = $connexion -> prepare('SELECT * FROM utilisateur WHERE `login` = ?');
+                $request = $connexion -> prepare('SELECT * FROM utilisateur 
+                                                           LEFT JOIN droit ON droit.id = utilisateur.id_droit 
+                                                           WHERE `login` = ?');
 
                 $request -> execute([ $_POST['login'] ]);
 
@@ -85,7 +85,7 @@
 
                     if (password_verify($_POST['password'], $login['password'])) {
 
-                        if($login['is_admin']){
+                        if($login['id_droit'] == 1){
 
                             $_SESSION['admin'] = 1;
 
@@ -94,6 +94,8 @@
                         } else {
 
                             $_SESSION['logged'] = $_POST['login'];
+                            $_SESSION['id'] = $login['id'];
+                            $_SESSION['droit'] = $_POST['denomination'];
 
                         }
 
