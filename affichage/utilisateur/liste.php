@@ -26,6 +26,7 @@
 
 </nav>
 
+
 <?php
 
     if(isset($_SESSION['registered'])) {
@@ -69,20 +70,20 @@
 
 
 
-                            if($user['id_droit'] == 1 ) {
+                            if($user['denomination'] == 'admin' ) {
 
 
                                 ?>
 
                                     <a class='card-link' href="<?= Config::ADMIN ?>">&#128273;</a>
 
-                                    <p class='card-text'> <?= $user['denomination'] ?> </p>
-
                                 <?php
 
                             }
 
                         ?>
+
+                        <p class='card-text'> <?= $user['denomination'] ?> </p>
     
                     </div>
                 </div>

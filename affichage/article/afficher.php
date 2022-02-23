@@ -21,4 +21,4 @@
         ?>
 </article>
 
-<a href="<?= Config::INDEX ?>" class="btn btn-primary">Retour a la Liste d'Article</a>
+<a href="<?= Config::INDEX ?>" class="btn btn-primary mt-5">Retour a la Liste d'Article</a>

@@ -1,6 +1,6 @@
 <?php
 
-    if((isset($_SESSION['logged']) && $_SESSION['logged'] == $log['login']) || (isset($_SESSION['admin']))) {
+    if((isset($_SESSION['logged']))) {
         ?>
 
             <form class='form-group mt-5' method="POST" enctype="multipart/form-data">
@@ -25,6 +25,23 @@
                     <label for="floatingtitre">Confirmer nouveau Mot de Passe : </label>
 
                 </div>
+
+                <select name="droit" id="">
+
+                    <?php
+
+                        foreach($droits as $droit) {
+                            ?>
+
+                            <option <?php if($droit['id'] == $log['id_droit']) echo 'selected' ?> value="<?= $droit['id'] ?> "><?= $droit['denomination'] ?> </option>
+
+                        <?php
+
+                        }
+
+                    ?>
+
+                </select>
 
                 <input type="submit" name='valider_update' value='Valider' />
 

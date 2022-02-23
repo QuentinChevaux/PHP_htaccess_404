@@ -8,29 +8,22 @@
 
         public function liste() {
 
+            // if(isset($_SESSION['droit']) && $_SESSION['droit'] == 'admin') {
+
                 include 'bdd.php';
 
-                // if(isset($_SESSION['logged'])) {
-
-                //     $utilisateur_connecte = $connexion -> prepare('SELECT * FROM utilisateur LEFT JOIN droit ON droit.id = utilisateur.id_droit WHERE `login` = ? ');
-
-                //     $utilisateur_connecte -> execute([ $_SESSION['logged'] ]);
-
-                //     $utilisateur = $utilisateur_connecte -> fetchAll();
-
-                // } else {
-
-                    $liste = $connexion -> prepare('SELECT * FROM utilisateur LEFT JOIN droit ON droit.id = utilisateur.id_droit');
+                    $liste = $connexion -> prepare('SELECT utilisateur.id as id, `login`, `password`, denomination FROM utilisateur 
+                                                                            LEFT JOIN droit ON droit.id = utilisateur.id_droit');
         
                     $liste -> execute();
-        
+                    
                     $utilisateur = $liste -> fetchAll();
 
-                // }
-    
                 $parametres = compact('utilisateur');
     
                 $this -> afficherVue($parametres);
+
+            // }
 
         }
 
@@ -74,7 +67,7 @@
             if(isset($_POST['valider_connexion'])) {
 
                 $request = $connexion -> prepare('SELECT * FROM utilisateur 
-                                                           LEFT JOIN droit ON droit.id = utilisateur.id_droit 
+                                                           LEFT JOIN droit ON droit.id = utilisateur.id_droit
                                                            WHERE `login` = ?');
 
                 $request -> execute([ $_POST['login'] ]);
@@ -87,8 +80,7 @@
 
                         if($login['id_droit'] == 1){
 
-                            $_SESSION['admin'] = 1;
-
+                            $_SESSION['droit'] = 'admin';
                             $_SESSION['logged'] = $_POST['login'];
 
                         } else {
@@ -131,13 +123,19 @@
 
             include 'bdd.php';
 
-            $request = $connexion -> prepare('SELECT * FROM utilisateur WHERE `id` = ?');
+            $request = $connexion -> prepare('SELECT * FROM utilisateur WHERE utilisateur.id = ?');
 
             $request -> execute([$parametre]);
 
             $log = $request -> fetch();
 
-            $parametres = compact('log');
+            $requete = $connexion -> prepare('SELECT * FROM droit');
+
+            $requete -> execute();
+
+            $droits = $requete -> fetchAll();
+
+            $parametres = compact('log', 'droits');
 
             $this -> afficherVue($parametres, 'edition');
 
@@ -145,15 +143,15 @@
 
                 if(isset($_SESSION['logged']) && $_POST['password'] == $_POST['password_confirm']) {
     
-                    $request2 = $connexion -> prepare('UPDATE utilisateur SET `login` = ?, `password` = ? WHERE id = ?');
+                    $request2 = $connexion -> prepare('UPDATE utilisateur SET `login` = ?, `password` = ?, `id_droit` = ? WHERE id = ?');
 
                     if($_POST['password'] == $log['password']) {
 
-                        $request2 -> execute([ $_POST['login'], $_POST['password'], $parametre ]);
+                        $request2 -> execute([ $_POST['login'], $_POST['password'], $_POST['droit'], $parametre ]);
  
                     } else {
                         
-                        $request2 -> execute([ $_POST['login'], password_hash($_POST['password'], PASSWORD_BCRYPT), $parametre ]);
+                        $request2 -> execute([ $_POST['login'], password_hash($_POST['password'], PASSWORD_BCRYPT), $_POST['droit'], $parametre ]);
 
                     }
     
@@ -182,6 +180,26 @@
             include 'bdd.php';
 
             $this -> afficherVue([], 'admin');
+
+        }
+
+        public function supprimer($id) {
+
+            if(isset($_SESSION['droit']) && $_SESSION['droit'] == 'admin' || $_SESSION['droit'] == 'redacteur') {
+
+                include 'bdd.php';
+
+                $requete = $connexion -> prepare('DELETE FROM utilisateur WHERE id = ?');
+
+                $requete -> execute([ $id ]);
+
+                header('Location: ' . Config::USER_LIST);
+
+            } else {
+
+                header('Location: ' . Config::USER_LIST);
+
+            }
 
         }
 

@@ -21,6 +21,21 @@
 
     </div>
 
+    <?php
+    
+        foreach($categories as $categorie) {
+            ?>
+
+            <label for=""><?= $categorie['nom'] ?></label>
+            <input type="checkbox" value="<?= $categorie['id'] ?>" name="checkbox[]"/>
+            <br />
+            
+            <?php
+            
+        }
+    
+    ?>
+
     <input type="submit" name='valider' value='Valider' />
 
 </form>

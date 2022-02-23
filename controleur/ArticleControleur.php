@@ -3,18 +3,14 @@
     namespace controleur;
 
     use Config;
+use model\ArticleModel;
+use model\CategorieArticleModel;
 
 class ArticleControleur extends BaseControleur {
 
         public function liste() {
 
-            include 'bdd.php';
-
-            $liste = $connexion -> prepare('SELECT * FROM article JOIN utilisateur ON utilisateur.id = article.id_utilisateur');
-
-            $liste -> execute();
-
-            $articles = $liste -> fetchAll();
+            $articles = ArticleModel::findAll();
 
             $parametres = compact('articles');
 
@@ -24,24 +20,11 @@ class ArticleControleur extends BaseControleur {
 
         public function afficher($parametre) {
 
-            include 'bdd.php';
-
-            $afficher = $connexion -> prepare('SELECT * FROM `article` JOIN utilisateur ON utilisateur.id = article.id_utilisateur 
-                                                                       WHERE article.id = ?');
-
-            $afficher -> execute([$parametre]);
-
-            $article = $afficher -> fetch();
+            $article = ArticleModel::findByIdJoinUtilisateur($parametre);
             
             if($article) {
-                
-                $requete = $connexion -> prepare('SELECT * FROM `categorie_article`
-                                                  JOIN categorie ON categorie.id = categorie_article.id_categorie
-                                                  WHERE id_article = ?');
 
-                $requete -> execute([$parametre]);
-
-                $categorie = $requete -> fetchAll();
+                $categorie = CategorieArticleModel::findByIdArticle($parametre);
 
                 $parametres = compact('article', 'categorie');
 
@@ -57,7 +40,13 @@ class ArticleControleur extends BaseControleur {
 
         public function insertion() {
 
-            $this -> afficherVue([], 'insert');
+            include 'bdd.php';
+
+            $categories = ArticleModel::findAll();
+
+            $parametres = compact('categories');
+
+            $this -> afficherVue($parametres, 'insert');
             
             if(isset($_POST['valider'])) {
 
@@ -65,13 +54,25 @@ class ArticleControleur extends BaseControleur {
 
                     if($_SESSION['droit'] == 'admin' || $_SESSION['droit'] == 'redacteur') {
 
-                        include 'bdd.php';
+                        // $requete = $connexion -> prepare('SELECT * FROM article WHERE titre = ?');
+
+                        // $requete -> execute([$_POST['titre']]);
+
+                        // $doublon = $requete -> fetch();
+
+                        // if($doublon) {
+
+                            
+
+                        //     echo 'boublon';
+
+                        // } else {
 
                         $insert = $connexion -> prepare('INSERT INTO article (`titre`, `contenu`, `image`, id_utilisateur) VALUES (?, ?, ?, ?)');
             
                         $filename = $_FILES['image']['name'];
             
-                        $target_file = './assets/image/' . $filename;
+                        $target_file = './assets/image/' . $filename . "_" . time();
             
                         $file_extension = pathinfo($target_file, PATHINFO_EXTENSION);
                         $file_extension = strtolower($file_extension);
@@ -88,6 +89,13 @@ class ArticleControleur extends BaseControleur {
                                 }
                 
                             }
+                        }
+
+                        $id_article = $connexion -> lastInsertId();
+
+                        // Au lieu de faire 40 requete on peux faire lastInsertId pour voir le dernier article inseré
+
+                        CategorieArticleModel::create($id_article, $_POST['checkbox']);
 
                     } else {
 
@@ -95,7 +103,7 @@ class ArticleControleur extends BaseControleur {
 
                     }
                     
-                }
+                // }
 
             }
 
@@ -103,13 +111,9 @@ class ArticleControleur extends BaseControleur {
 
         public function supprimer($parametre) {
 
-            include 'bdd.php';
-
             if(isset($_SESSION['admin'])) {
 
-                $supprimer = $connexion -> prepare('DELETE FROM article WHERE id = ?');
-    
-                $supprimer -> execute([$parametre]);
+                ArticleModel::deleteById($parametre);
     
                 header('Location: ' . Config::INDEX);
 
@@ -119,19 +123,25 @@ class ArticleControleur extends BaseControleur {
 
         public function edition($parametre) {
 
-            include 'bdd.php';
-                        
-            $oldcard = $connexion -> prepare('SELECT * FROM article WHERE id = ?');
-
-            $oldcard -> execute([$parametre]);
-
-            $old = $oldcard -> fetch();
+            $old = ArticleModel::findById($parametre);
 
             $parametres = compact('old');
 
             $this -> afficherVue($parametres, 'edition'); 
     
             if(isset($_POST['valider_update'])) {
+
+                $requete = $connexion -> prepare('SELECT * FROM article WHERE titre = ? AND id != ?');
+
+                $requete -> execute([$_POST['titre'], $parametre]);
+
+                $doublon = $requete -> fetch();
+
+                if($doublon) {
+
+                    echo 'boublon';
+
+                } else {
 
                 $update = $connexion -> prepare('UPDATE article SET `titre` = ?, `contenu` = ?, `image` = ? WHERE id = ?');
 
@@ -159,6 +169,7 @@ class ArticleControleur extends BaseControleur {
                 
             }
 
+        }
 
         }
 
