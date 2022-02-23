@@ -123,6 +123,8 @@ class ArticleControleur extends BaseControleur {
 
         public function edition($parametre) {
 
+            include 'bdd.php';
+
             $old = ArticleModel::findById($parametre);
 
             $parametres = compact('old');
