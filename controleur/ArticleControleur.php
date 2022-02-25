@@ -3,8 +3,8 @@
     namespace controleur;
 
     use Config;
-use model\ArticleModel;
-use model\CategorieArticleModel;
+    use model\ArticleModel;
+    use model\CategorieArticleModel;
 
 class ArticleControleur extends BaseControleur {
 

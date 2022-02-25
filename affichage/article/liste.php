@@ -7,7 +7,7 @@
     <div class="card-body">
 
                     <?php
-                        if((isset($_SESSION['admin']) && $_SESSION['admin'] == 1) || (isset($_SESSION['id']) && $_SESSION['id'] == $article['id_utilisateur'])) {
+                        if((isset($_SESSION['droit']) && $_SESSION['droit'] == "admin") || (isset($_SESSION['id']) && $_SESSION['id'] == $article['id_utilisateur'])) {
                             ?>
                     
                                 <a class='btn btn-danger' href="<?= Config::DELETE . $article['id'] ?>">&#10007;</a>
@@ -17,7 +17,7 @@
                             <?php
 
                         }
-
+                        
                     ?>
 
                     <h4 class="card-title"><?= $article['titre'] ?></h4>

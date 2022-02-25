@@ -5,7 +5,6 @@
     class DroitModel extends BaseModel {
 
         
-
     }
 
 ?>

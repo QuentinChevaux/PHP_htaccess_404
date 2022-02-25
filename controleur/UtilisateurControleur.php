@@ -3,6 +3,8 @@
     namespace controleur;
 
     use Config;
+use model\DroitModel;
+use model\UtilisateurModel;
 
     class UtilisateurControleur extends BaseControleur {
 
@@ -10,14 +12,7 @@
 
             // if(isset($_SESSION['droit']) && $_SESSION['droit'] == 'admin') {
 
-                include 'bdd.php';
-
-                    $liste = $connexion -> prepare('SELECT utilisateur.id as id, `login`, `password`, denomination FROM utilisateur 
-                                                                            LEFT JOIN droit ON droit.id = utilisateur.id_droit');
-        
-                    $liste -> execute();
-                    
-                    $utilisateur = $liste -> fetchAll();
+                $utilisateur = UtilisateurModel::findAllJoinDroit();
 
                 $parametres = compact('utilisateur');
     
@@ -29,17 +24,13 @@
 
         public function inscription() {
 
-            include 'bdd.php';
-
             $this -> afficherVue([], 'inscription');
 
             if(isset($_POST['valider_inscription'])) {
 
                 if($_POST['password'] == $_POST['password_verify']) {
 
-                    $request = $connexion -> prepare('INSERT INTO utilisateur (`login`, `password`) VALUES (?, ?)');
-        
-                    $request -> execute([ $_POST['login'], password_hash($_POST['password'], PASSWORD_BCRYPT) ]);
+                    UtilisateurModel::insert($_POST['login'], password_hash($_POST['password'], PASSWORD_BCRYPT));
 
                     $_SESSION['registered'] = 'Vous vous êtes bien Inscrit !';
 
@@ -60,19 +51,11 @@
 
         public function connexion() {
 
-            include 'bdd.php';
-
             $this -> afficherVue([], 'connexion');
 
             if(isset($_POST['valider_connexion'])) {
 
-                $request = $connexion -> prepare('SELECT * FROM utilisateur 
-                                                           LEFT JOIN droit ON droit.id = utilisateur.id_droit
-                                                           WHERE `login` = ?');
-
-                $request -> execute([ $_POST['login'] ]);
-
-                $login = $request -> fetch();
+                $login = UtilisateurModel::findByLogin($_POST['login']);
 
                 if($login) {
 
@@ -121,19 +104,9 @@
 
         public function edition($parametre) {
 
-            include 'bdd.php';
+            $log = UtilisateurModel::findById($parametre);
 
-            $request = $connexion -> prepare('SELECT * FROM utilisateur WHERE utilisateur.id = ?');
-
-            $request -> execute([$parametre]);
-
-            $log = $request -> fetch();
-
-            $requete = $connexion -> prepare('SELECT * FROM droit');
-
-            $requete -> execute();
-
-            $droits = $requete -> fetchAll();
+            $droits = DroitModel::findAll();
 
             $parametres = compact('log', 'droits');
 
@@ -143,9 +116,11 @@
 
                 if(isset($_SESSION['logged']) && $_POST['password'] == $_POST['password_confirm']) {
     
-                    $request2 = $connexion -> prepare('UPDATE utilisateur SET `login` = ?, `password` = ?, `id_droit` = ? WHERE id = ?');
-
                     if($_POST['password'] == $log['password']) {
+
+                        include 'bdd.php';
+
+                        $request2 = $connexion -> prepare('UPDATE utilisateur SET `login` = ?, `password` = ?, `id_droit` = ? WHERE id = ?');
 
                         $request2 -> execute([ $_POST['login'], $_POST['password'], $_POST['droit'], $parametre ]);
  
@@ -187,11 +162,7 @@
 
             if(isset($_SESSION['droit']) && $_SESSION['droit'] == 'admin' || $_SESSION['droit'] == 'redacteur') {
 
-                include 'bdd.php';
-
-                $requete = $connexion -> prepare('DELETE FROM utilisateur WHERE id = ?');
-
-                $requete -> execute([ $id ]);
+                UtilisateurModel::deleteById($id);
 
                 header('Location: ' . Config::USER_LIST);
 
